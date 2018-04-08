@@ -20,7 +20,7 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = current_user.orders.where(payed: false)
+    @orders = current_user.orders.cart
     @total = @orders.pluck("price * quantity").sum()
   end
 end

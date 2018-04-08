@@ -8,7 +8,7 @@ class BillingsController < ApplicationController
 	end	
 
 	def pre_pay
-		orders = current_user.orders.where(payed: false)
+		orders = current_user.orders.cart
 		total = orders.pluck("price * quantity").sum()
 		items = orders.map do |order|
 			item = {}
@@ -60,7 +60,7 @@ class BillingsController < ApplicationController
 				currency: 'USD'
 				)
 
- 			orders = current_user.orders.where(payed: false)
+ 			orders = current_user.orders.cart
  			orders.update_all(payed: true, billing_id: billing.id)
 
  			redirect_to root_path, notice: "La compra se realizó con éxito!"
