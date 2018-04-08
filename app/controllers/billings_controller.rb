@@ -10,15 +10,7 @@ class BillingsController < ApplicationController
 	def pre_pay
 		orders = current_user.orders.cart
 		total = orders.get_total
-		items = orders.map do |order|
-			item = {}
-			item[:name] = order.product.name
-			item[:sku] = order.id.to_s
-			item[:price] = order.price.to_s
-			item[:currency] = 'USD'
-			item[:quantity] = order.quantity
-			item
-		end
+		items = get_items_hash(orders)
 
 		@payment = PayPal::SDK::REST::Payment.new({
 	  :intent =>  "sale",
@@ -41,9 +33,7 @@ class BillingsController < ApplicationController
 		else
  			render json: payment.error
 		end
-
 	end
-
 
 	def execute
 		paypal_payment = PayPal::SDK::REST::Payment.find(params[:paymentId])
@@ -70,5 +60,19 @@ class BillingsController < ApplicationController
 		
 	end
 
+	private 
+	def get_items_hash(orders)
+		items = orders.map do |order|
+			item = {}
+			item[:name] = order.product.name
+			item[:sku] = order.id.to_s
+			item[:price] = order.price.to_s
+			item[:currency] = 'USD'
+			item[:quantity] = order.quantity
+			item
+		end
+	end
+
+	
 
 end
